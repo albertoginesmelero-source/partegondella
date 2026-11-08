@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Formulario de parte de trabajo · Gondella</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#17212b;background:#f2f4f7}
+*{box-sizing:border-box}body{margin:0;padding:16px 10px 40px}main{max-width:760px;margin:auto}
+header{padding:8px 2px 16px}h1{font-size:1.45rem;margin:0 0 5px}.muted,.hint{color:#667085;font-size:.88rem}
+.card{background:#fff;border:1px solid #dfe3e8;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #1018280a}
+h2{font-size:1.08rem;margin:0 0 14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:flex;flex-direction:column;gap:6px;font-size:.9rem;font-weight:650}
+input,textarea,select{font:inherit;width:100%;padding:11px;border:1px solid #cbd2da;border-radius:9px;background:white;color:#17212b}
+textarea{min-height:105px;resize:vertical}.full{grid-column:1/-1}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button,.actions button,.actions a{font:inherit;font-weight:650;border:0;border-radius:10px;padding:12px 14px;cursor:pointer;text-align:center;text-decoration:none;display:inline-block}
+.tabs button{background:#e8edf3;color:#253044}.tabs button.active,.primary{background:#175cd3!important;color:white!important}
+.secondary{background:#e8edf3;color:#253044}.panel{display:none}.panel.active{display:block}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.actions button,.actions a{flex:1;min-width:180px}
+#status{margin-top:12px;color:#167044;font-size:.9rem}.small{font-size:.82rem;color:#667085}
+#aviso,noscript div{background:#fff4e5;border:1px solid #f5b862;color:#7a4b00;border-radius:12px;padding:12px;margin:10px 0;font-size:.92rem}
+#resultado{border:2px solid #175cd3}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.full{grid-column:auto}body{padding:10px 8px 28px}.card{padding:14px}h1{font-size:1.25rem}}
+</style>
+</head>
+<body><main>
+<header><h1>Parte de trabajo · Gondella</h1><p class="muted">Formulario independiente para el instalador. Rellena los datos de la OT, genera el archivo y envíalo por correo.</p></header>
+<noscript><div>Tu navegador tiene JavaScript desactivado. Actívalo para usar el formulario.</div></noscript>
+<div id="aviso">Si ves este aviso, el formulario no se está ejecutando (probablemente lo has abierto desde la vista previa de un correo o de una app). Abre este enlace en <b>Chrome</b> o <b>Safari</b>.</div>
+
+<section id="infoOT" class="card" hidden><h2>Orden cargada desde el enlace</h2><p id="infoOTtxt" class="small" style="white-space:pre-line;margin:0"></p></section>
+<section class="card"><h2>Datos de la orden de trabajo</h2><div class="grid">
+<label>Número de OT<input id="otNum" placeholder="Ej. OT-0123" required></label>
+<label>Fecha del parte<input id="fecha" type="date" required></label>
+<label>Cliente<input id="cliente" placeholder="Nombre del cliente"></label>
+<label>Dirección de trabajo<input id="dir" placeholder="Dirección / localidad"></label>
+<label class="full">Trabajo previsto<input id="titulo" placeholder="Descripción del trabajo de la OT"></label>
+</div><p class="hint">Estos datos identifican el parte cuando lo importes en el ERP.</p></section>
+
+<div class="tabs"><button class="active" type="button" data-tab="trabajo">Trabajos realizados</button><button type="button" data-tab="incidencia">Incidencias</button></div>
+
+<section id="trabajo" class="panel active card"><h2>Trabajos realizados</h2><div class="grid">
+<label>Nombre del instalador<input id="tecNombre" required placeholder="Nombre y apellidos"></label>
+<label>Número de operarios<input id="nop" type="number" min="1" value="1"></label>
+<label>Horas totales del equipo<input id="horas" type="number" min="0" step=".5" value="8"></label>
+<label>Estado del trabajo<select id="estadoTrabajo"><option>En curso</option><option>Terminado</option><option>Bloqueado</option></select></label>
+<label class="full">Descripción de los trabajos realizados<textarea id="txt" placeholder="Describe los trabajos realizados..." required></textarea></label>
+<label class="full">Fotografías<input id="fotosTrabajo" type="file" accept="image/*" multiple></label>
+</div><p class="hint">Pulsa «Preparar parte». Después te aparecerán los botones para enviar o descargar el archivo.</p>
+<div class="actions"><button class="primary" type="button" id="descTrabajo">Preparar parte de trabajo</button></div></section>
+
+<section id="incidencia" class="panel card"><h2>Incidencias</h2><div class="grid">
+<label>Nombre de quien comunica<input id="reporta" placeholder="Nombre y apellidos"></label>
+<label>Título de la incidencia<input id="tituloInc" placeholder="Resumen breve"></label>
+<label>Tipo<select id="tipoInc"><option>Incidencia en obra</option><option>Medidas erróneas / replanteo</option><option>Material faltante o retrasado</option><option>Acceso o cambios del cliente</option><option>Trabajos adicionales</option><option>Condiciones del lugar</option><option>Falta de personal</option><option>Otro</option></select></label>
+<label>Gravedad<select id="grav"><option>Leve</option><option selected>Moderada</option><option>Grave</option><option>Crítica</option></select></label>
+<label class="full">Descripción de la incidencia<textarea id="desc" placeholder="Explica qué ha ocurrido, dónde y cómo afecta al trabajo..."></textarea></label>
+<label class="full">Fotografías<input id="fotosInc" type="file" accept="image/*" multiple></label>
+</div><p class="hint">Pulsa «Preparar incidencia». Si también has realizado trabajos, prepara además el parte de trabajo.</p>
+<div class="actions"><button class="primary" type="button" id="descInc">Preparar incidencia</button></div></section>
+
+<section id="resultado" class="card" hidden>
+<h2>Archivo listo</h2>
+<p id="resNombre" class="small"></p>
+<div class="actions">
+<button type="button" class="primary" id="btnShare" hidden>Compartir / enviar por correo</button>
+<a id="btnDown" class="secondary" role="button">Descargar archivo</a>
+<a id="btnMail" class="secondary" role="button">Abrir correo</a>
+</div>
+<p class="small">«Compartir» te deja elegir tu app de correo con el archivo ya adjunto. Si usas «Abrir correo», adjunta a mano el archivo descargado.</p>
+</section>
+
+<section class="card"><h2>Cómo devolverlo</h2><ol><li>Pulsa «Preparar» en el apartado que corresponda.</li><li>Pulsa «Compartir» y elige tu correo, o «Descargar archivo».</li><li>Envía el archivo a <b>a.gines@gondella.com</b>.</li></ol><p class="small">Puedes preparar un archivo por cada apartado. El ERP admite estos archivos desde «Partes recibidos».</p><div id="status" role="status"></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+$('aviso').hidden=true; // si el script se ejecuta, se oculta el aviso
+const MAIL='a.gines@gondella.com';
+const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)};
+const STORAGE_KEY='gondella_parte_form_v1';
+$('fecha').value=today();
+
+function guardarBorrador(){
+  try{
+    const datos={};
+    document.querySelectorAll('input:not([type=file]),textarea,select').forEach(el=>{if(el.id)datos[el.id]=el.value});
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(datos));
+    $('status').textContent='Borrador guardado automáticamente en este dispositivo.';
+  }catch(e){}
+}
+try{
+  const datos=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
+  Object.keys(datos).forEach(id=>{const el=$(id);if(el&&el.type!=='file')el.value=datos[id]});
+}catch(e){}
+document.querySelectorAll('input:not([type=file]),textarea,select').forEach(el=>{
+  el.addEventListener('input',guardarBorrador);
+  el.addEventListener('change',guardarBorrador);
+});
+
+// ---- Datos de la OT recibidos en el enlace (#mdata-...) ----
+function datosEnlace(){
+  const m=/^#mdata-([A-Za-z0-9_-]+)$/.exec(location.hash);
+  if(!m)return null;
+  try{
+    let b=m[1].replace(/-/g,'+').replace(/_/g,'/');while(b.length%4)b+='=';
+    const p=JSON.parse(decodeURIComponent(escape(atob(b))));
+    return (p&&p.formato==='GONDELLA_OT_LINK_V1'&&p.orden&&p.orden.num)?p.orden:null;
+  }catch(e){return null}
+}
+const OT_LINK=datosEnlace();
+if(OT_LINK){
+  let previo='';
+  try{previo=(JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}').otNum)||''}catch(e){}
+  if(previo&&previo!==OT_LINK.num){['txt','desc','tituloInc'].forEach(id=>{$(id).value=''})} // otra OT: no arrastrar textos
+  $('otNum').value=OT_LINK.num;$('otNum').readOnly=true;
+  $('cliente').value=OT_LINK.cliente||'';
+  $('dir').value=OT_LINK.dir||'';
+  $('titulo').value=OT_LINK.titulo||'';
+  if(OT_LINK.nop)$('nop').value=OT_LINK.nop;
+  if(OT_LINK.encargado&&!$('tecNombre').value.trim())$('tecNombre').value=OT_LINK.encargado;
+  const l=[];
+  if(OT_LINK.fecha)l.push('Inicio: '+OT_LINK.fecha+(OT_LINK.hIni?' '+OT_LINK.hIni:'')+'  ·  Fin: '+(OT_LINK.fFin||OT_LINK.fecha)+(OT_LINK.hFin?' '+OT_LINK.hFin:''));
+  if(OT_LINK.turno)l.push('Horario: '+OT_LINK.turno);
+  if(OT_LINK.encargado)l.push('Encargado: '+OT_LINK.encargado);
+  if(OT_LINK.notas)l.push('Notas: '+OT_LINK.notas);
+  $('infoOTtxt').textContent=OT_LINK.num+(OT_LINK.cliente?' · '+OT_LINK.cliente:'')+(l.length?'\n'+l.join('\n'):'');
+  $('infoOT').hidden=false;
+  guardarBorrador();
+}
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));
+}));
+
+const uid=()=>'mob-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
+
+// Lee la foto y la reduce (máx. 1600 px, JPEG) para que el archivo no pese decenas de MB.
+function leerFoto(f){
+  return new Promise(resolve=>{
+    const fr=new FileReader();
+    fr.onerror=()=>resolve(null);
+    fr.onload=()=>{
+      const original=fr.result;
+      const img=new Image();
+      img.onerror=()=>resolve({id:uid(),url:original,nombre:f.name,tipo:f.type});
+      img.onload=()=>{
+        try{
+          const M=1600,k=Math.min(1,M/Math.max(img.width,img.height));
+          const w=Math.round(img.width*k),h=Math.round(img.height*k);
+          const c=document.createElement('canvas');c.width=w;c.height=h;
+          c.getContext('2d').drawImage(img,0,0,w,h);
+          resolve({id:uid(),url:c.toDataURL('image/jpeg',0.72),nombre:f.name.replace(/\.[^.]+$/,'')+'.jpg',tipo:'image/jpeg'});
+        }catch(e){resolve({id:uid(),url:original,nombre:f.name,tipo:f.type})}
+      };
+      img.src=original;
+    };
+    fr.readAsDataURL(f);
+  });
+}
+async function fotos(id){
+  const res=await Promise.all([...$(id).files].map(leerFoto));
+  return res.filter(Boolean);
+}
+function base(){
+  const num=$('otNum').value.trim();
+  if(!num){alert('Indica el número de OT.');$('otNum').focus();return null}
+  return {id:(OT_LINK&&OT_LINK.id)||'externa-'+num,num,cliente:$('cliente').value.trim(),titulo:$('titulo').value.trim(),dir:$('dir').value.trim()};
+}
+
+let ultimaUrl=null;
+function mostrarResultado(nombre,paquete){
+  const json=JSON.stringify(paquete,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  if(ultimaUrl){try{URL.revokeObjectURL(ultimaUrl)}catch(e){}}
+  ultimaUrl=URL.createObjectURL(blob);
+  const mb=(blob.size/1048576).toFixed(1);
+  $('resNombre').textContent=nombre+' · '+mb+' MB';
+  const d=$('btnDown');d.href=ultimaUrl;d.download=nombre;
+  const asunto=encodeURIComponent('Parte OT '+paquete.orden.num);
+  $('btnMail').href='mailto:'+MAIL+'?subject='+asunto+'&body='+encodeURIComponent('Adjunto el archivo '+nombre);
+  const sh=$('btnShare');
+  const file=new File([blob],nombre,{type:'application/json'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    sh.hidden=false;
+    sh.onclick=async()=>{
+      try{await navigator.share({files:[file],title:'Parte OT '+paquete.orden.num,text:'Parte para '+MAIL})}
+      catch(e){if(e&&e.name!=='AbortError')alert('No se pudo compartir. Usa «Descargar archivo».')}
+    };
+  }else{sh.hidden=true}
+  const r=$('resultado');r.hidden=false;
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+  guardarBorrador();
+}
+
+async function preparar(btnId,textoBtn,fn){
+  const btn=$(btnId);btn.disabled=true;btn.textContent='Preparando…';
+  try{await fn()}
+  catch(e){alert('No se ha podido preparar el archivo. Inténtalo de nuevo.')}
+  finally{btn.disabled=false;btn.textContent=textoBtn}
+}
+
+$('descTrabajo').addEventListener('click',()=>{
+  const o=base();if(!o)return;
+  if(!$('tecNombre').value.trim()||!$('txt').value.trim()){alert('Indica tu nombre y describe los trabajos realizados.');return}
+  preparar('descTrabajo','Preparar parte de trabajo',async()=>{
+    const registro={id:uid(),ot:o.id,otNum:o.num,cliente:o.cliente,tec:'',tecNombre:$('tecNombre').value.trim(),fecha:$('fecha').value||today(),h:+$('horas').value,nop:+$('nop').value,txt:$('txt').value.trim(),est:$('estadoTrabajo').value,fotos:await fotos('fotosTrabajo'),origen:'movil',tipoEnvio:'parte'};
+    mostrarResultado('parte-'+o.num+'-'+registro.fecha+'.json',{formato:'GONDELLA_PARTE_V1',enviado:new Date().toISOString(),registro,orden:o});
+  });
+});
+$('descInc').addEventListener('click',()=>{
+  const o=base();if(!o)return;
+  if(!$('tituloInc').value.trim()){alert('Indica un título para la incidencia.');return}
+  preparar('descInc','Preparar incidencia',async()=>{
+    const registro={id:uid(),num:'EXT-'+Date.now(),ot:o.id,otNum:o.num,cliente:o.cliente,titulo:$('tituloInc').value.trim(),desc:$('desc').value.trim(),tipo:$('tipoInc').value,grav:$('grav').value,estado:'Abierta',resp:'',fecha:$('fecha').value||today(),sol:'',fin:'',fotos:await fotos('fotosInc'),reporta:$('reporta').value.trim(),origen:'movil',tipoEnvio:'incidencia'};
+    mostrarResultado('incidencia-'+o.num+'-'+registro.fecha+'.json',{formato:'GONDELLA_PARTE_V1',enviado:new Date().toISOString(),registro,orden:o});
+  });
+});
+</script></body></html>
